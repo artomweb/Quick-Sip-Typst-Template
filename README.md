@@ -2,7 +2,7 @@
 
 Creates aviation style checklists like Quick Reference Handbooks.
 
-<img src="thumbnail.png" width="200">
+<img src="thumbnail.png" width="300">
 
 ### Features:
 
