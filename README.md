@@ -21,8 +21,7 @@ Creates aviation style checklists like Quick Reference Handbooks.
 ## Start with
 
 ```typst
-#import "../template/template.typ": *
-
+#import "@preview/quick-sip:0.1.0": *
 #show: QRH.with(title: "Cup of Tea")
 ```
 

@@ -1,5 +1,5 @@
 [package]
-name = "Quick-Sip"
+name = "quick-sip"
 version = "0.1.0"
 entrypoint = "lib.typ"
 authors = ["Typst GmbH <https://typst.app>"]
