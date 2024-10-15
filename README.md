@@ -1,8 +1,8 @@
-# Typst QRH Template
+# Quick Sip - Typst QRH Template
 
 Creates aviation style checklists like Quick Reference Handbooks.
 
-![alt text](images/mainImage.png)
+![alt text](thumbnail.png)
 
 ### Features:
 
@@ -17,6 +17,12 @@ Creates aviation style checklists like Quick Reference Handbooks.
 - Choose One
 - Go to step
 - End section now
+
+## Start with
+
+```typst
+
+```
 
 #### Index
 
