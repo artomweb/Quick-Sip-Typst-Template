@@ -66,7 +66,7 @@ Conditionals for this section.
 ]
 ```
 
-#### Conditions
+#### Objective
 
 An objective for this section (optional).
 
