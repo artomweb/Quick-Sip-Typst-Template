@@ -2,9 +2,12 @@
 name = "quick-sip"
 version = "0.1.0"
 entrypoint = "lib.typ"
-authors = ["Typst GmbH <https://typst.app>"]
-license = "MIT-0"
-description = "An IEEE-style paper template to publish at conferences and journals for Electrical Engineering, Computer Science, and Computer Engineering"
+authors = ["Archie Webster <https://github.com/artomweb>"]
+license = "MIT"
+description = "A template for creating quick reference handbook style checklists."
+repository = "https://github.com/artomweb/Quick-Sip-Typst-Template"
+keywords = ["QRH", "aviation", "checklist"]
+categories = ["utility"]
 
 [template]
 path = "template"

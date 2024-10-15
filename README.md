@@ -25,6 +25,17 @@ Creates aviation style checklists like Quick Reference Handbooks.
 #show: QRH.with(title: "Cup of Tea")
 ```
 
+Then add a section:
+
+```typst
+#section("Cup of Tea preparation")[
+  #step("KETTLE", "Filled to 1 CUP")
+  #step([*When* KETTLE boiled:], "")
+  #step([*If* sugar required], "")
+    //.. Rest of section goes here
+]
+```
+
 #### Index
 
 An index with an entry for each section in the document.
