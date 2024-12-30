@@ -1,4 +1,4 @@
-#import "../template/template.typ": *
+#import "../lib.typ": *
 
 #show: QRH.with(title: "Cup of Tea")
 
@@ -17,25 +17,25 @@
   #step("KETTLE switch", "ON")
   #caution([HOT WATER #linebreak()Adult supervision required.])
   #step([*When* KETTLE boiled:], "")
-  #subStep("MUG", "Fill")
+  #substep("MUG", "Fill")
   #step("Steep", "Allow to steep for a few minutes")
-  #waitHere()
+  #wait()
   #step("Remove teabag", "")
 
   #note("Stir after each step")
 
-  #chooseOne[
+  #choose-one[
     #option[Black tea *required:*]
     #tab(tab("No sugar here."))
 
-    #endNow()
+    #end()
     #option[Tea with MILK *required:*]
-    #tab(goToStep("9"))
+    #tab(goto("9"))
   ]
   // #pagebreak()
   #step("Pour milk into MUG", "To desired colour")
   #step([*If* sugar required], "")
-  #subStep([Sugar (one #linebreak() teaspoon at a time)], "Add to MUG")
+  #substep([Sugar (one #linebreak() teaspoon at a time)], "Add to MUG")
 
 ]
 
