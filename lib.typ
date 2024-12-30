@@ -372,27 +372,25 @@
 }
 
 
-#let index() = {
-  locate(loc => {
-    let elems = query(<section>)
+#let index() = context {
+  let elems = query(<section>)
 
-    if elems.len() == 0 {
-      return
-    }
+  if elems.len() == 0 {
+    return
+  }
 
-    align(center, text(weight: "bold")[INDEX])
+  align(center, text(weight: "bold")[INDEX])
 
-    for body in elems {
-      text([#link(body.location(), body.child.body) ])
-      box(width: 1fr, repeat[.])
-      text[#body.location().page()]
-      linebreak()
-    }
+  for body in elems {
+    text([#link(body.location(), body.child.body)])
+    box(width: 1fr, repeat[.])
+    text[#body.location().page()]
+    linebreak()
+  }
 
-
-    pagebreak()
-  })
+  pagebreak()
 }
+
 
 #let QRH(title: none, body) = {
   set page(
