@@ -338,7 +338,7 @@
           (5pt, 2.83pt), // Rightmost point
           (0pt, 5pt), // Top-left corner
         ),
-        link(label("step" + "-" + str(section-num) + "-" + step))[#text(weight: "bold")[Go to step #step]],
+        link(label("step" + "-" + str(section-num) + "-" + str(step)))[#text(weight: "bold")[Go to step #step]],
       ),
     )
   }

@@ -30,7 +30,7 @@
 
     #end()
     #option[Tea with MILK *required:*]
-    #tab(goto("9"))
+    #tab(goto(9))
   ]
   // #pagebreak()
   #step("Pour milk into MUG", "To desired colour")
@@ -45,8 +45,9 @@
   #step("This is a step in a new section", "Action")
   #step("This is another step", "Action")
 
-  #tab(goto("1")) // Step 1 in THIS section
+  #tab(goto(1)) // Step 1 in THIS section
 
 
 ]
 
+#pagebreak()
