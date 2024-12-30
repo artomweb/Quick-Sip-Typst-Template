@@ -125,7 +125,7 @@ A numbered step with options.
 Two right facing arrow heads followed by Go to step `step number`. Links to step in pdf.
 
 ```typst
-#goto("9")
+#goto(9)
 ```
 
 #### End
