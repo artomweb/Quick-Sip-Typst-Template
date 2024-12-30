@@ -1,12 +1,27 @@
-#let page-number() = (
-  context {
-    counter(page).display()
-  }
-)
 
+// Creates the optional index on the first page
+#let index() = context {
+  let elems = query(<section>) // get every section with the label section
+
+  if elems.len() == 0 {
+    return
+  }
+
+  align(center, text(weight: "bold")[INDEX]) // Title INDEX
+
+  for body in elems {
+    text([#link(body.location(), body.child.body)])
+    box(width: 1fr, repeat[.])
+    text[#body.location().page()]
+    linebreak()
+  }
+
+  pagebreak() // Always start QRH after the index
+}
+
+// Define a section layout with a title, fill color, and body content
 #let section(
   title,
-  fill-clr: rgb("FFFFFF"),
   body,
 ) = (
   context {
@@ -22,7 +37,7 @@
             move(line(length: 100%, stroke: 2pt)),
 
             // The box with text
-            box(width: 67mm, stroke: 2pt, outset: 4pt, fill: fill-clr)[
+            box(width: 67mm, stroke: 2pt, outset: 4pt, fill: rgb("FFFFFF"))[
               #v(0.8mm)
               #set text(size: 10pt)
               #box(width: 60mm)[
@@ -41,7 +56,7 @@
           move(dy: box-height / 2, line(length: 100%, stroke: 2pt)),
 
           // The box with text
-          box(width: 67mm, stroke: 2pt, outset: 4pt, fill: fill-clr)[
+          box(width: 67mm, stroke: 2pt, outset: 4pt, fill: rgb("FFFFFF"))[
             #v(0.8mm)
             #set text(size: 10pt)
             #box(width: 60mm)[
@@ -77,34 +92,8 @@
   }
 )
 
-#let step(a, b) = (
-  context {
-    v(1pt)
-    counter("step").step() // Update the step counter
-    set text(size: 9.8pt)
-
-    // Get the current step number
-    let step-num = counter("step").get()
-    let section-num = counter("section").get()
-    text[#str(step-num.at(0) + 1) #label("step" + "-" + str(section-num.at(0)) + "-" + str(step-num.at(0) + 1))]
-
-    h(10pt)
-    if (a != none and a != "" and (b == none or b == "")) {
-      a
-    } else if (a != none and a != "" and b != none and b != "") {
-      a
-      " "
-      box(width: 1fr, repeat[.])
-      " "
-      b
-    }
-
-    linebreak()
-  }
-)
-
-
-#let condition(fill-bg: rgb("EAEAEAFF"), body) = (
+// At the top of a section in a box with fill-bg
+#let condition(body) = (
   context {
     if (body.has("children")) {
       let condition-width = measure(
@@ -114,7 +103,7 @@
       ).width
 
 
-      box(width: 100%, inset: (y: 3pt, x: 3pt), outset: (y: 4pt), fill: fill-bg)[
+      box(width: 100%, inset: (y: 3pt, x: 3pt), outset: (y: 4pt), fill: rgb("EAEAEAFF"))[
 
         #box(
           grid(
@@ -150,7 +139,7 @@
 
       ]
     } else {
-      box(width: 100%, inset: (y: 3pt, x: 3pt), outset: (y: 4pt), fill: fill-bg)[
+      box(width: 100%, inset: (y: 3pt, x: 3pt), outset: (y: 4pt), fill: rgb("EAEAEAFF"))[
 
         #box(
           grid(
@@ -167,9 +156,10 @@
   }
 )
 
-#let objective(fill-bg: rgb("EAEAEAFF"), body) = (
+// Goes under a condition, with fill-bg
+#let objective(body) = (
   context {
-    box(width: 100%, inset: (y: 3pt, x: 3pt), outset: (y: 4pt), fill: fill-bg)[
+    box(width: 100%, inset: (y: 3pt, x: 3pt), outset: (y: 4pt), fill: rgb("EAEAEAFF"))[
       // #v(5pt)
       #box(
         grid(
@@ -183,9 +173,97 @@
   }
 )
 
-#let note(fill-bg: rgb("edf7f7ff"), body) = (
+// A step that is automatically numbered for each section
+#let step(prompt, action) = (
   context {
-    box(width: 100%, outset: (y: 4pt), inset: (x: 4pt), fill: fill-bg)[
+    v(1pt)
+    counter("step").step() // Update the step counter
+    set text(size: 9.8pt)
+
+    // Get the current step number
+    let step-num = counter("step").get()
+    let section-num = counter("section").get()
+    text[#str(step-num.at(0) + 1) #label(
+        "step" + "-" + str(section-num.at(0)) + "-" + str(step-num.at(0) + 1),
+      )] // label with step and section number so that it can be referenced by a goto
+
+    h(10pt)
+
+    if (prompt != none and prompt != "" and (action == none or action == "")) {
+      // If prompt exists and there is no action
+      prompt
+    } else if (prompt != none and prompt != "" and action != none and action != "") {
+      // If both exist, display `prompt`, repeated dots, and `action`
+      prompt
+      " "
+      box(width: 1fr, repeat[.])
+      " "
+      action
+    }
+
+
+    linebreak()
+  }
+)
+
+// A step that is indented from the left only and has no number
+#let substep(prompt, action) = {
+  v(1pt)
+  set text(size: 9.8pt)
+  move(
+    dx: 25pt,
+    dy: -2pt,
+    box(
+      width: 100% - 25pt,
+
+      if (prompt != none and prompt != "" and (action == none or action == "")) {
+        // If prompt exists and there is no action
+        prompt
+      } else if (prompt != none and prompt != "" and action != none and action != "") {
+        // If both exist, display `prompt`, repeated dots, and `action`
+        prompt
+        " "
+        box(width: 1fr, repeat[.])
+        " "
+        action
+      },
+    ),
+  )
+}
+
+// Move content in for a tab indent and limit width
+#let tab(body) = {
+  move(
+    dx: 17pt,
+    box(
+      width: 100% - 16pt,
+      body,
+    ),
+  )
+}
+
+// Callout of caution with line-col
+#let caution(body) = (
+  context {
+    stack(
+      spacing: 4pt,
+      line(length: 100%, stroke: 2pt + rgb("#d98d00ff")),
+
+      grid(
+        columns: 2,
+        column-gutter: 6pt,
+        text(weight: "bold", size: 9.8pt)[Caution!], text(weight: "bold", size: 9.8pt)[#body],
+      ),
+
+      line(length: 100%, stroke: 2pt + rgb("#d98d00ff")),
+    )
+  }
+)
+
+// Callout for a note with fill-bg
+#let note(body) = (
+  context {
+    box(width: 100%, outset: (y: 4pt), inset: (x: 4pt), fill: rgb("edf7f7ff"))[
       #box(
         grid(
           columns: 2,
@@ -198,32 +276,8 @@
   }
 )
 
-
-#let caution(fill-bg: rgb("edf7f7ff"), body) = (
-  context {
-    stack(
-      spacing: 4pt,
-      line(length: 100%, stroke: 2pt + rgb("d98d00ff")),
-
-      grid(
-        columns: 2,
-        column-gutter: 6pt,
-        text(weight: "bold", size: 9.8pt)[Caution!], text(weight: "bold", size: 9.8pt)[#body],
-      ),
-
-      line(length: 100%, stroke: 2pt + rgb("d98d00ff")),
-    )
-  }
-)
-
-#let bullet(phrase) = (
-  context {
-    phrase
-    linebreak()
-  }
-)
-
-#let choose-one(fill-bg: rgb("edf7f7ff"), body) = (
+// Choose one conditional with a line drawn between each step
+#let choose-one(body) = (
   context {
     counter("step").step()
     counter("localOption").update(0)
@@ -236,6 +290,7 @@
   }
 )
 
+// An option inside a choose-one conditional
 #let option(body) = (
   context {
     counter("globalOption").step()
@@ -254,21 +309,14 @@
       ),
     )
 
-    // text[#("option" + str(globalOption + 1)) ]
-
     context {
       let localOption = counter("localOption").get().at(0)
       let globalOption = counter("globalOption").get().at(0)
-      // text[#globalOption #localOption]
       if (localOption > 1) {
         let pos = locate(label("option" + str(globalOption - 1))).position()
         let currPos = locate(label("option" + str(globalOption))).position()
 
         if (currPos.page == pos.page) {
-          // text[#pos.y #currPos.y]
-          // linebreak()
-          // text["Previous Option Page: " #pos.page]
-          // text["Current Option Page: " #currPos.page]
           place(top, line(start: (pos.x - 25.5pt, pos.y - 20pt), end: (currPos.x - 25.5pt, currPos.y - 20pt)))
         }
       }
@@ -276,25 +324,37 @@
   }
 )
 
-
-#let detail(body) = (
+// Links to another step
+#let goto(step) = (
   context {
-    body
+    let section-num = counter("section").get().at(0)
+    move(
+      dx: 18pt,
+      grid(
+        columns: 3,
+        align: horizon,
+        column-gutter: 3pt,
+        path(
+          fill: black,
+          closed: true, // Close the triangle
+          (0pt, 0pt), // Bottom-left corner
+          (5pt, 2.83pt), // Rightmost point
+          (0pt, 5pt), // Top-left corner
+        ),
+        path(
+          fill: black,
+          closed: true, // Close the triangle
+          (0pt, 0pt), // Bottom-left corner
+          (5pt, 2.83pt), // Rightmost point
+          (0pt, 5pt), // Top-left corner
+        ),
+        link(label("step" + "-" + str(section-num) + "-" + str(step)))[#text(weight: "bold")[Go to step #step]],
+      ),
+    )
   }
 )
 
-#let tab(body) = {
-  move(
-    dx: 17pt,
-    box(
-      width: 100% - 16pt,
-      body,
-    ),
-  )
-}
-
-
-
+// End the current section
 #let end() = {
   align(center)[
     #box(
@@ -313,84 +373,17 @@
   ]
 }
 
-
-
-#let goto(step) = (
-  context {
-    let section-num = counter("section").get().at(0)
-    move(
-      dx: 18pt,
-      grid(
-        columns: 3,
-        align: horizon,
-        column-gutter: 3pt,
-        path(
-          fill: black, // Color of the first triangle
-          closed: true, // Close the triangle
-          (0pt, 0pt), // Bottom-left corner
-          (5pt, 2.83pt), // Rightmost point
-          (0pt, 5pt), // Top-left corner
-        ),
-        path(
-          fill: black, // Color of the first triangle
-          closed: true, // Close the triangle
-          (0pt, 0pt), // Bottom-left corner
-          (5pt, 2.83pt), // Rightmost point
-          (0pt, 5pt), // Top-left corner
-        ),
-        link(label("step" + "-" + str(section-num) + "-" + str(step)))[#text(weight: "bold")[Go to step #step]],
-      ),
-    )
-  }
-)
-
-
+// long line with lots of dots
 #let wait() = {
   repeat[#stack(dir: ltr, rect(width: 2mm, height: 1mm, fill: black), h(2mm))]
 }
 
-#let substep(a, b) = {
-  v(1pt)
-  set text(size: 9.8pt)
-  move(
-    dx: 25pt,
-    dy: -2pt,
-    box(
-      width: 100% - 25pt,
-
-      if (a != none and a != "" and (b == none or b == "")) {
-        a
-      } else if (a != none and a != "" and b != none and b != "") {
-        a
-        " "
-        box(width: 1fr, repeat[.])
-        " "
-        b
-      },
-    ),
-  )
-}
-
-
-#let index() = context {
-  let elems = query(<section>)
-
-  if elems.len() == 0 {
-    return
+// Show the current page number (INTERNAL)
+#let page-number() = (
+  context {
+    counter(page).display() // Display the current page number
   }
-
-  align(center, text(weight: "bold")[INDEX])
-
-  for body in elems {
-    text([#link(body.location(), body.child.body)])
-    box(width: 1fr, repeat[.])
-    text[#body.location().page()]
-    linebreak()
-  }
-
-  pagebreak()
-}
-
+)
 
 #let QRH(title: none, body) = {
   set page(

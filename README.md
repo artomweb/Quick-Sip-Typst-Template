@@ -21,7 +21,7 @@ Creates aviation style checklists like Quick Reference Handbooks.
 ## Start with
 
 ```typst
-#import "@preview/quick-sip:0.1.0": *
+#import "@preview/quick-sip:0.1.1": *
 #show: QRH.with(title: "Cup of Tea")
 ```
 
@@ -82,6 +82,15 @@ A numbered step in the checklist. The first parameter is to the left of the dott
 #step("KETTLE", "Filled to 1 CUP")
 #step([*When* KETTLE boiled:], "")
 #step([*If* sugar required], "")
+```
+
+#### Substep
+
+A non-numbered step with a left indentation. Similarly to a step, the first parameter is to the left of the dotted line, the second is to the right.
+
+```typst
+#substep("MUG", "Fill")
+#substep([Sugar (one #linebreak() teaspoon at a time)], "Add to MUG")
 ```
 
 #### Tab
