@@ -42,6 +42,11 @@
 #pagebreak()
 
 #section("Another section")[
+  #step("This is a step in a new section", "Action")
+  #step("This is another step", "Action")
+
+  #tab(goto("1")) // Step 1 in THIS section
 
 
 ]
+

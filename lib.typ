@@ -11,44 +11,47 @@
 ) = (
   context {
     if (title != none and title != "") {
+      counter("section").step()
 
       counter("step").update(0)
-      let box-height = measure( align(
+      let box-height = measure(
+        align(
           center,
           stack(
-      // Line behind the box
-      move( line(length: 100%, stroke: 2pt)),
+            // Line behind the box
+            move(line(length: 100%, stroke: 2pt)),
 
-      // The box with text
-      box(width: 67mm, stroke: 2pt, outset: 4pt, fill: fill-clr)[
-        #v(0.8mm)
-        #set text(size: 10pt)
-        #box(width: 60mm)[
-          #align(center)[#upper(strong(title))]
-        ]
-        #v(0.8mm)
-      ]
-    ),
-        )).height
+            // The box with text
+            box(width: 67mm, stroke: 2pt, outset: 4pt, fill: fill-clr)[
+              #v(0.8mm)
+              #set text(size: 10pt)
+              #box(width: 60mm)[
+                #align(center)[#upper(strong(title))]
+              ]
+              #v(0.8mm)
+            ],
+          ),
+        ),
+      ).height
 
       align(
         center,
         stack(
-      // Line behind the box
-      move(dy: box-height/2, line(length: 100%, stroke: 2pt)),
+          // Line behind the box
+          move(dy: box-height / 2, line(length: 100%, stroke: 2pt)),
 
-      // The box with text
-      box(width: 67mm, stroke: 2pt, outset: 4pt, fill: fill-clr)[
-        #v(0.8mm)
-        #set text(size: 10pt)
-        #box(width: 60mm)[
-          #align(center)[#upper(strong(title)) #label("section")]
-        ]
-        #v(0.8mm)
-      ],
+          // The box with text
+          box(width: 67mm, stroke: 2pt, outset: 4pt, fill: fill-clr)[
+            #v(0.8mm)
+            #set text(size: 10pt)
+            #box(width: 60mm)[
+              #align(center)[#upper(strong(title)) #label("section")]
+            ]
+            #v(0.8mm)
+          ],
 
-      v(1.3mm)
-    ),
+          v(1.3mm),
+        ),
       )
 
       body
@@ -82,7 +85,8 @@
 
     // Get the current step number
     let step-num = counter("step").get()
-    text[#str(step-num.at(0) + 1) #label("step" + str(step-num.at(0) + 1))]
+    let section-num = counter("section").get()
+    text[#str(step-num.at(0) + 1) #label("step" + "-" + str(section-num.at(0)) + "-" + str(step-num.at(0) + 1))]
 
     h(10pt)
     if (a != none and a != "" and (b == none or b == "")) {
@@ -103,43 +107,48 @@
 #let condition(fill-bg: rgb("EAEAEAFF"), body) = (
   context {
     if (body.has("children")) {
-      let condition-width = measure(text(size: 7pt)[
+      let condition-width = measure(
+        text(size: 7pt)[
           Condition:
-        ]).width
-
-
+        ],
+      ).width
 
 
       box(width: 100%, inset: (y: 3pt, x: 3pt), outset: (y: 4pt), fill: fill-bg)[
 
         #box(
           grid(
-  columns: 2,
-  align: horizon,
-  column-gutter: 6pt,
-  row-gutter: 5pt,
-  text(size: 7pt)[Condition:],
-  text(size: 9.6pt)[One or more of these occur:],
-  // Add an empty space in the first column to shift #body
-  [ ],
-  move(dx: 5pt, text(size: 9.6pt)[
-     #grid(columns: 2,
-        align: horizon,
-        row-gutter: 5pt,
-        column-gutter: 2pt,
-        ..for c in body.children{
-          if (c != [ ] and c != (:)) {
-          (circle(radius: 1.178mm / 2, fill: black),
-          c.at("body"))
-        }
-        }
-      )
-  ])
-),
+            columns: 2,
+            align: horizon,
+            column-gutter: 6pt,
+            row-gutter: 5pt,
+            text(size: 7pt)[Condition:],
+            text(size: 9.6pt)[One or more of these occur:],
+            // Add an empty space in the first column to shift #body
+            [ ],
+            move(
+              dx: 5pt,
+              text(size: 9.6pt)[
+                #grid(
+                  columns: 2,
+                  align: horizon,
+                  row-gutter: 5pt,
+                  column-gutter: 2pt,
+                  ..for c in body.children {
+                    if (c != [ ] and c != (:)) {
+                      (
+                        circle(radius: 1.178mm / 2, fill: black),
+                        c.at("body"),
+                      )
+                    }
+                  }
+                )
+              ],
+            )
+          ),
         )
 
       ]
-
     } else {
       box(width: 100%, inset: (y: 3pt, x: 3pt), outset: (y: 4pt), fill: fill-bg)[
 
@@ -155,13 +164,11 @@
 
       ]
     }
-
   }
 )
 
 #let objective(fill-bg: rgb("EAEAEAFF"), body) = (
   context {
-
     box(width: 100%, inset: (y: 3pt, x: 3pt), outset: (y: 4pt), fill: fill-bg)[
       // #v(5pt)
       #box(
@@ -173,13 +180,11 @@
         ),
       )
     ]
-
   }
 )
 
 #let note(fill-bg: rgb("edf7f7ff"), body) = (
   context {
-
     box(width: 100%, outset: (y: 4pt), inset: (x: 4pt), fill: fill-bg)[
       #box(
         grid(
@@ -190,14 +195,12 @@
         ),
       )
     ]
-
   }
 )
 
 
 #let caution(fill-bg: rgb("edf7f7ff"), body) = (
   context {
-
     stack(
       spacing: 4pt,
       line(length: 100%, stroke: 2pt + rgb("d98d00ff")),
@@ -210,7 +213,6 @@
 
       line(length: 100%, stroke: 2pt + rgb("d98d00ff")),
     )
-
   }
 )
 
@@ -231,7 +233,6 @@
     text()[Choose one:]
     linebreak()
     body
-
   }
 )
 
@@ -272,7 +273,6 @@
         }
       }
     }
-
   }
 )
 
@@ -311,13 +311,13 @@
       ),
     )
   ]
-
 }
 
 
 
 #let goto(step) = (
   context {
+    let section-num = counter("section").get().at(0)
     move(
       dx: 18pt,
       grid(
@@ -325,20 +325,20 @@
         align: horizon,
         column-gutter: 3pt,
         path(
-  fill: black,        // Color of the first triangle
-  closed: true,       // Close the triangle
-  (0pt, 0pt),         // Bottom-left corner
-  (5pt, 2.83pt),       // Rightmost point
-  (0pt, 5pt)         // Top-left corner
-),
+          fill: black, // Color of the first triangle
+          closed: true, // Close the triangle
+          (0pt, 0pt), // Bottom-left corner
+          (5pt, 2.83pt), // Rightmost point
+          (0pt, 5pt), // Top-left corner
+        ),
         path(
-  fill: black,        // Color of the first triangle
-  closed: true,       // Close the triangle
-  (0pt, 0pt),         // Bottom-left corner
-  (5pt, 2.83pt),       // Rightmost point
-  (0pt, 5pt)         // Top-left corner
-),
-        link(label("step" + step))[#text(weight: "bold")[Go to step #step]],
+          fill: black, // Color of the first triangle
+          closed: true, // Close the triangle
+          (0pt, 0pt), // Bottom-left corner
+          (5pt, 2.83pt), // Rightmost point
+          (0pt, 5pt), // Top-left corner
+        ),
+        link(label("step" + "-" + str(section-num) + "-" + step))[#text(weight: "bold")[Go to step #step]],
       ),
     )
   }
@@ -366,7 +366,6 @@
         box(width: 1fr, repeat[.])
         " "
         b
-
       },
     ),
   )
@@ -425,6 +424,6 @@
       )
     ],
   )
-  set text(font: "TeX Gyre Heros", size: 9.6pt)
+  set text(size: 9.6pt)
   body
 }
