@@ -325,34 +325,29 @@
 )
 
 // Links to another step
-#let goto(step) = (
-  context {
-    let section-num = counter("section").get().at(0)
-    move(
-      dx: 18pt,
-      grid(
-        columns: 3,
-        align: horizon,
-        column-gutter: 3pt,
-        path(
-          fill: black,
-          closed: true, // Close the triangle
-          (0pt, 0pt), // Bottom-left corner
-          (5pt, 2.83pt), // Rightmost point
-          (0pt, 5pt), // Top-left corner
-        ),
-        path(
-          fill: black,
-          closed: true, // Close the triangle
-          (0pt, 0pt), // Bottom-left corner
-          (5pt, 2.83pt), // Rightmost point
-          (0pt, 5pt), // Top-left corner
-        ),
-        link(label("step" + "-" + str(section-num) + "-" + str(step)))[#text(weight: "bold")[Go to step #step]],
-      ),
+#let goto(step) = context {
+  let section-num = counter("section").get().at(0)
+  let triangle = curve(
+    fill: black,
+    curve.move((0pt, 0pt)), // Start at bottom-left corner
+    curve.line((5pt, 2.83pt)), // Line to rightmost point
+    curve.line((0pt, 5pt)), // Line to top-left corner
+    curve.close(), // Close back to start
+  )
+
+  move(dx: 18pt)[
+    #grid(
+      columns: (auto, auto, 1fr),
+      column-gutter: 3pt,
+      align: horizon,
+      triangle,
+      triangle,
+      link(label("step" + "-" + str(section-num) + "-" + str(step)))[
+        #text(weight: "bold")[Go to step #step]
+      ],
     )
-  }
-)
+  ]
+}
 
 // End the current section
 #let end() = {
