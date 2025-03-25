@@ -174,61 +174,40 @@
 )
 
 // A step that is automatically numbered for each section
-#let step(prompt, action) = (
+#let step(prompt, action, isSubstep: false) = (
   context {
     v(1pt)
     counter("step").step() // Update the step counter
     set text(size: 9.8pt)
 
-    // Get the current step number
-    let step-num = counter("step").get()
-    let section-num = counter("section").get()
-    text[#str(step-num.at(0) + 1) #label(
-        "step" + "-" + str(section-num.at(0)) + "-" + str(step-num.at(0) + 1),
-      )] // label with step and section number so that it can be referenced by a goto
-
-    h(10pt)
-
-    if (prompt != none and prompt != "" and (action == none or action == "")) {
-      // If prompt exists and there is no action
-      prompt
-    } else if (prompt != none and prompt != "" and action != none and action != "") {
-      // If both exist, display `prompt`, repeated dots, and `action`
-      prompt
-      " "
-      box(width: 1fr, repeat[.])
-      " "
-      action
-    }
+    // Get the current step number and section number
+    let step-num = counter("step").get().at(0)
+    let section-num = counter("section").get().at(0)
 
 
-    linebreak()
+    // Grid layout for step number, prompt, and action
+    grid(
+      columns: if (action != none and action != "") {
+        (2em, auto, auto, auto)
+      } else {
+        (2em, auto)
+      },
+      // stroke: 1pt,
+      if (not isSubstep) {
+        text[#str(step-num + 1) #label("step" + "-" + str(section-num) + "-" + str(step-num + 1))]
+      },
+      if (isSubstep) { box(inset: (left: 10pt))[#prompt] } else { text(hyphenate: true)[#prompt] },
+      if (action != none and action != "") {
+        box(inset: (x: 2pt))[#repeat(gap: 4pt)[.]]
+      },
+      if (action != none and action != "") { align(right)[#action] }
+    )
   }
 )
 
 // A step that is indented from the left only and has no number
 #let substep(prompt, action) = {
-  v(1pt)
-  set text(size: 9.8pt)
-  move(
-    dx: 25pt,
-    dy: -2pt,
-    box(
-      width: 100% - 25pt,
-
-      if (prompt != none and prompt != "" and (action == none or action == "")) {
-        // If prompt exists and there is no action
-        prompt
-      } else if (prompt != none and prompt != "" and action != none and action != "") {
-        // If both exist, display `prompt`, repeated dots, and `action`
-        prompt
-        " "
-        box(width: 1fr, repeat[.])
-        " "
-        action
-      },
-    ),
-  )
+  step(prompt, action, isSubstep: true)
 }
 
 // Move content in for a tab indent and limit width

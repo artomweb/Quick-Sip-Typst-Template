@@ -24,6 +24,7 @@
 
   #note("Stir after each step")
 
+  // #pagebreak()
   #choose-one[
     #option[Black tea *required:*]
     #tab(tab("No sugar here."))
@@ -32,8 +33,7 @@
     #option[Tea with MILK *required:*]
     #tab(goto(9))
   ]
-  // #pagebreak()
-  #step("Pour milk into MUG", "To desired colour")
+  #step("Pour milk into MUG this is a really long prompt", "To desired colour")
   #step([*If* sugar required], "")
   #substep([Sugar (one #linebreak() teaspoon at a time)], "Add to MUG")
 
