@@ -174,8 +174,10 @@
 )
 
 // A step that is automatically numbered for each section
-#let step(prompt, action) = (
+#let step(prompt, ..actions) = (
   context {
+    let actionsPos = actions.pos()
+    let thisAction = if (actionsPos.len() > 0) { actionsPos.at(0) } else { "" }
     v(1pt)
     counter("step").step() // Update the step counter
     set text(size: 9.8pt)
@@ -189,16 +191,13 @@
 
     h(10pt)
 
-    if (prompt != none and prompt != "" and (action == none or action == "")) {
-      // If prompt exists and there is no action
-      prompt
-    } else if (prompt != none and prompt != "" and action != none and action != "") {
-      // If both exist, display `prompt`, repeated dots, and `action`
-      prompt
+
+    prompt
+    if thisAction != "" {
       " "
       box(width: 1fr, repeat[.])
       " "
-      action
+      thisAction
     }
 
 
@@ -207,7 +206,9 @@
 )
 
 // A step that is indented from the left only and has no number
-#let substep(prompt, action) = {
+#let substep(prompt, ..actions) = {
+  let actionsPos = actions.pos()
+  let thisAction = if (actionsPos.len() > 0) { actionsPos.at(0) } else { "" }
   v(1pt)
   set text(size: 9.8pt)
   move(
@@ -215,18 +216,15 @@
     dy: -2pt,
     box(
       width: 100% - 25pt,
-
-      if (prompt != none and prompt != "" and (action == none or action == "")) {
-        // If prompt exists and there is no action
-        prompt
-      } else if (prompt != none and prompt != "" and action != none and action != "") {
-        // If both exist, display `prompt`, repeated dots, and `action`
-        prompt
-        " "
-        box(width: 1fr, repeat[.])
-        " "
-        action
-      },
+      [
+        #prompt
+        #if thisAction != "" {
+          " "
+          box(width: 1fr, repeat[.])
+          " "
+          thisAction
+        }
+      ],
     ),
   )
 }

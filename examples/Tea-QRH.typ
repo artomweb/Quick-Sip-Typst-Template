@@ -16,11 +16,11 @@
   #step("Teabag", "In MUG")
   #step("KETTLE switch", "ON")
   #caution([HOT WATER #linebreak()Adult supervision required.])
-  #step([*When* KETTLE boiled:], "")
+  #step([*When* KETTLE boiled:])
   #substep("MUG", "Fill")
   #step("Steep", "Allow to steep for a few minutes")
   #wait()
-  #step("Remove teabag", "")
+  #step("Remove teabag")
 
   #note("Stir after each step")
 
@@ -34,7 +34,7 @@
   ]
   // #pagebreak()
   #step("Pour milk into MUG", "To desired colour") <pourMilk>
-  #step([*If* sugar required], "")
+  #step([*If* sugar required])
   #substep([Sugar (one #linebreak() teaspoon at a time)], "Add to MUG")
 
 ]
@@ -43,7 +43,9 @@
 
 #section("Another section")[
   #step("This is a step in a new section", "Action") <firstStep>
-  #step("This is another step", "Action")
+  #step("This is another step", "")
+  #substep("This is a substep", "Action")
+  #substep("This is a substep", "")
 
   #tab(goto(1)) // Step 1 in THIS section (step number not tag)
 
