@@ -174,7 +174,7 @@
 )
 
 // A step that is automatically numbered for each section
-#let step(prompt, ..actions) = (
+#let step(prompt, ..actions, isSubstep: false) = (
   context {
     let actionsPos = actions.pos()
     let thisAction = if (actionsPos.len() > 0) { actionsPos.at(0) } else { "" }
@@ -182,51 +182,34 @@
     counter("step").step() // Update the step counter
     set text(size: 9.8pt)
 
-    // Get the current step number
-    let step-num = counter("step").get()
-    let section-num = counter("section").get()
-    text[#str(step-num.at(0) + 1) #label(
-        "step" + "-" + str(section-num.at(0)) + "-" + str(step-num.at(0) + 1),
-      )] // label with step and section number so that it can be referenced by a goto
-
-    h(10pt)
+    // Get the current step number and section number
+    let step-num = counter("step").get().at(0)
+    let section-num = counter("section").get().at(0)
 
 
-    prompt
-    if thisAction != "" {
-      " "
-      box(width: 1fr, repeat[.])
-      " "
-      thisAction
-    }
-
-
-    linebreak()
+    // Grid layout for step number, prompt, and action
+    grid(
+      columns: if (thisAction != "") {
+        (2em, auto, auto, auto)
+      } else {
+        (2em, auto)
+      },
+      // stroke: 1pt,
+      if (not isSubstep) {
+        text[#str(step-num + 1) #label("step" + "-" + str(section-num) + "-" + str(step-num + 1))]
+      },
+      if (isSubstep) { box(inset: (left: 10pt))[#prompt] } else { text(hyphenate: true)[#prompt] },
+      if (thisAction != "") {
+        box(inset: (x: 2pt))[#repeat(gap: 4pt)[.]]
+      },
+      if (thisAction != "") { align(right)[#thisAction] }
+    )
   }
 )
 
 // A step that is indented from the left only and has no number
-#let substep(prompt, ..actions) = {
-  let actionsPos = actions.pos()
-  let thisAction = if (actionsPos.len() > 0) { actionsPos.at(0) } else { "" }
-  v(1pt)
-  set text(size: 9.8pt)
-  move(
-    dx: 25pt,
-    dy: -2pt,
-    box(
-      width: 100% - 25pt,
-      [
-        #prompt
-        #if thisAction != "" {
-          " "
-          box(width: 1fr, repeat[.])
-          " "
-          thisAction
-        }
-      ],
-    ),
-  )
+#let substep(prompt, ..action) = {
+  step(prompt, ..action, isSubstep: true)
 }
 
 // Move content in for a tab indent and limit width

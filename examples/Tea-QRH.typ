@@ -24,6 +24,7 @@
 
   #note("Stir after each step")
 
+  // #pagebreak()
   #choose-one[
     #option[Black tea *required:*]
     #tab(tab("No sugar here."))
@@ -43,9 +44,9 @@
 
 #section("Another section")[
   #step("This is a step in a new section", "Action") <firstStep>
-  #step("This is another step", "")
-  #substep("This is a substep", "Action")
-  #substep("This is a substep", "")
+  // #step("This is another step", "")
+  // #substep("This is a substep", "Action")
+  // #substep("This is a substep", "")
 
   #tab(goto(1)) // Step 1 in THIS section (step number not tag)
 
