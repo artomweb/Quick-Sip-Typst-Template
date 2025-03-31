@@ -30,11 +30,11 @@
 
     #end()
     #option[Tea with MILK *required:*]
-    #tab(goto(9))
+    #tab(goto("ifSugar"))
   ]
   // #pagebreak()
   #step("Pour milk into MUG", "To desired colour")
-  #step([*If* sugar required], "")
+  #step([*If* sugar required], "") <ifSugar>
   #substep([Sugar (one #linebreak() teaspoon at a time)], "Add to MUG")
 
 ]
@@ -42,10 +42,10 @@
 #pagebreak()
 
 #section("Another section")[
-  #step("This is a step in a new section", "Action")
+  #step("This is a step in a new section", "Action") <firstStep>
   #step("This is another step", "Action")
 
-  #tab(goto(1)) // Step 1 in THIS section
+  #tab(goto("firstStep")) // Step 1 in THIS section
 
 
 ]
