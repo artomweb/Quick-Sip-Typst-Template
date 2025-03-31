@@ -30,11 +30,11 @@
 
     #end()
     #option[Tea with MILK *required:*]
-    #tab(goto("ifSugar"))
+    #tab(goto("pourMilk"))
   ]
   // #pagebreak()
-  #step("Pour milk into MUG", "To desired colour")
-  #step([*If* sugar required], "") <ifSugar>
+  #step("Pour milk into MUG", "To desired colour") <pourMilk>
+  #step([*If* sugar required], "")
   #substep([Sugar (one #linebreak() teaspoon at a time)], "Add to MUG")
 
 ]
