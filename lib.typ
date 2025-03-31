@@ -304,7 +304,7 @@
 )
 
 // Links to another step
-#let goto(step) = context {
+#let goto(stepRef) = context {
   let section-num = counter("section").get().at(0)
   let triangle = curve(
     fill: black,
@@ -314,6 +314,8 @@
     curve.close(), // Close back to start
   )
 
+  let stepNumRef = counter("step").at(label(stepRef)).at(0) + 1 // Get the number of the step
+
   move(dx: 18pt)[
     #grid(
       columns: (auto, auto, 1fr),
@@ -321,8 +323,8 @@
       align: horizon,
       triangle,
       triangle,
-      link(label("step" + "-" + str(section-num) + "-" + str(step)))[
-        #text(weight: "bold")[Go to step #step]
+      link(label(stepRef))[
+        #text(weight: "bold")[Go to step #stepNumRef]
       ],
     )
   ]

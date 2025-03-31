@@ -76,10 +76,10 @@ An objective for this section (optional).
 
 #### Step
 
-A numbered step in the checklist. The first parameter is to the left of the dotted line, the second is to the right. If the second parameter is `""` then there is no dotted line.
+A numbered step in the checklist. The first parameter is to the left of the dotted line, the second is to the right. If the second parameter is `""` then there is no dotted line. Can be followed by a tag which is referenced by `goto()`.
 
 ```typst
-#step("KETTLE", "Filled to 1 CUP")
+#step("KETTLE", "Filled to 1 CUP") <fillKettle>
 #step([*When* KETTLE boiled:], "")
 #step([*If* sugar required], "")
 ```
@@ -131,10 +131,11 @@ A numbered step with options.
 
 #### Go to step
 
-Two right facing arrow heads followed by Go to step `step number`. Links to step in pdf.
+Two right facing arrow heads followed by Go to step `step number`. Links to step in pdf. The parameter is the name of a tag next to a step.
 
 ```typst
-#goto(9)
+#step("KETTLE", "Filled to 1 CUP") <fillKettle>
+#goto("fillKettle")
 ```
 
 #### End
