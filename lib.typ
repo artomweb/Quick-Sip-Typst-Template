@@ -215,7 +215,7 @@
   move(
     dx: 17pt,
     box(
-      width: 100% - 16pt,
+      width: 100% - 17pt,
       body,
     ),
   )
@@ -314,7 +314,17 @@
     curve.close(), // Close back to start
   )
 
-  let stepNumRef = counter("step").at(label(stepRef)).at(0) + 1 // Get the number of the step
+  let target-label = if type(stepRef) == int {
+    "step" + "-" + str(section-num) + "-" + str(stepRef)
+  } else {
+    stepRef
+  }
+
+  let step-text = if type(stepRef) == int {
+    str(stepRef)
+  } else {
+    str(counter("step").at(label(stepRef)).at(0) + 1)
+  }
 
   move(dx: 18pt)[
     #grid(
@@ -323,8 +333,8 @@
       align: horizon,
       triangle,
       triangle,
-      link(label(stepRef))[
-        #text(weight: "bold")[Go to step #stepNumRef]
+      link(label(target-label))[
+        #text(weight: "bold")[Go to step #step-text]
       ],
     )
   ]
