@@ -46,7 +46,7 @@
   #step("This is a step in a new section", "Action") <firstStep>
   #step("This is another step", "Action")
 
-  #tab(goto(1)) // Step 1 in THIS section (still works with numbers)
+  #tab(goto(1)) // Step 1 in THIS section (step number not tag)
 
 
 ]
