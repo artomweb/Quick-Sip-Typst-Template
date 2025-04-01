@@ -41,6 +41,9 @@
 
 #pagebreak()
 
+// Test backward compatibility for 0.1.x
+// E.g. "" for second parameter of step
+// And go to with int
 #section("Another section")[
   #step("This is a step in a new section", "Action") <firstStep>
   #step("This is another step", "")
