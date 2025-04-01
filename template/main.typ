@@ -1,4 +1,4 @@
-#import "@preview/quick-sip:0.1.1": *
+#import "@preview/quick-sip:0.1.2": *
 
 
 #show: QRH.with(title: "Title")
