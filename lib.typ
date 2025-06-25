@@ -1,3 +1,6 @@
+// Initialize counters for step hierarchy (adapted from Checklist A)
+#let sequenceStep = counter("sequenceStep")
+#let subStep = counter("subStep")
 
 // Creates the optional index on the first page
 #let index() = context {
@@ -28,7 +31,11 @@
     if (title != none and title != "") {
       counter("section").step()
 
+      // Reset all step-related counters for the new section
       counter("step").update(0)
+      sequenceStep.update(1)
+      subStep.update(1)
+
       let box-height = measure(
         align(
           center,
@@ -173,49 +180,47 @@
   }
 )
 
-// A step that is automatically numbered for each section
-#let step(prompt, ..actions) = (
-  context {
-    let actionsPos = actions.pos()
-    let thisAction = if (actionsPos.len() > 0) { actionsPos.at(0) } else { "" }
-    v(1pt)
-    counter("step").step() // Update the step counter
-    set text(size: 9.8pt)
-
-    // Get the current step number
-    let step-num = counter("step").get()
-    let section-num = counter("section").get()
-    text[#str(step-num.at(0) + 1) #label(
-        "step" + "-" + str(section-num.at(0)) + "-" + str(step-num.at(0) + 1),
-      )] // label with step and section number so that it can be referenced by a goto
-
-    h(10pt)
 
 
-    prompt
-    if thisAction != "" {
-      " "
-      box(width: 1fr, repeat[.])
-      " "
-      thisAction
-    }
-
-
-    linebreak()
-  }
-)
-
-// A step that is indented from the left only and has no number
-#let substep(prompt, ..actions) = {
+// Shared step component for main steps and substeps (inspired by Checklist A's step-component)
+#let step-component(prompt, isSubstep: false, ..actions) = context {
   let actionsPos = actions.pos()
   let thisAction = if (actionsPos.len() > 0) { actionsPos.at(0) } else { "" }
   v(1pt)
   set text(size: 9.8pt)
-  move(
-    dx: 25pt,
-    dy: -2pt,
+
+  // Update counters
+  counter("step").step() // Global step counter (for compatibility with Checklist B)
+  if not isSubstep {
+    sequenceStep.step() // Increment main step counter
+  }
+
+  // Get counter values
+  let step-num = counter("step").get().at(0)
+  let seq-step-num = sequenceStep.get().at(0)
+  let section-num = counter("section").get().at(0)
+
+  // Define indentation
+  let indent = if isSubstep { 1.2em } else { 0pt }
+
+  // Create label for main steps only
+  let label-text = if not isSubstep { "step-" + str(section-num) + "-" + str(seq-step-num) } else { none }
+
+  // Layout using grid
+  grid(
+    inset: (left: indent),
+    columns: (auto, 1fr),
+    column-gutter: 10pt,
+    // stroke: 2pt,
+    // Column 1: Step number for main steps, empty for substeps
+    if not isSubstep {
+      text[#str(seq-step-num) #if label-text != none { label(label-text) }]
+    } else {
+      [] // No numbering for substeps
+    },
+    // Column 2: Prompt and action
     box(
-      width: 100% - 25pt,
+      width: 100%,
       [
         #prompt
         #if thisAction != "" {
@@ -225,8 +230,18 @@
           thisAction
         }
       ],
-    ),
+    )
   )
+}
+
+// Main step function
+#let step(prompt, ..actions) = {
+  step-component(prompt, isSubstep: false, ..actions)
+}
+
+// Substep function
+#let substep(prompt, ..actions) = {
+  step-component(prompt, isSubstep: true, ..actions)
 }
 
 // Move content in for a tab indent and limit width
