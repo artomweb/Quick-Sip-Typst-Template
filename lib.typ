@@ -393,9 +393,9 @@
 
 #let QRH(title: none, body) = {
   set page(
-    width: 110mm,
+    width: 105mm,
     height: 177mm,
-    margin: (bottom: 12mm, top: 8mm, x: 6mm),
+    margin: (bottom: 12mm, top: 8mm, x: 9mm),
     footer: [
       #line(start: (0pt, -6pt), length: 100%)
       #place(
@@ -415,7 +415,7 @@
       #place(
         right,
         dy: -2pt,
-        text(size: 6pt)[
+        text(size: 6pt, fill: rgb("000000"))[
           #title
         ],
       )
