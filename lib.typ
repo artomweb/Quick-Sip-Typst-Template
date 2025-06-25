@@ -1,6 +1,9 @@
-// Initialize counters for step hierarchy (adapted from Checklist A)
-#let sequenceStep = counter("sequenceStep")
-#let subStep = counter("subStep")
+// Initialize counters for QRH hierarchy
+#let sectionCounter = counter("sectionCounter") // Tracks the current section number
+#let mainStep = counter("mainStep") // Tracks main steps within a section
+#let globalStepCounter = counter("globalStepCounter") // Tracks steps globally for compatibility
+#let optionInSectionCounter = counter("optionInSectionCounter") // Tracks options within a choose-one block in a section
+#let globalOptionCounter = counter("globalOptionCounter") // Tracks options globally across the document
 
 // Creates the optional index on the first page
 #let index() = context {
@@ -29,12 +32,11 @@
 ) = (
   context {
     if (title != none and title != "") {
-      counter("section").step()
+      sectionCounter.step()
 
       // Reset all step-related counters for the new section
-      counter("step").update(0)
-      sequenceStep.update(1)
-      subStep.update(1)
+      globalStepCounter.update(0)
+      mainStep.update(1)
 
       let box-height = measure(
         align(
@@ -109,9 +111,7 @@
         ],
       ).width
 
-
       box(width: 100%, inset: (y: 3pt, x: 3pt), outset: (y: 4pt), fill: rgb("EAEAEAFF"))[
-
         #box(
           grid(
             columns: 2,
@@ -143,11 +143,9 @@
             )
           ),
         )
-
       ]
     } else {
       box(width: 100%, inset: (y: 3pt, x: 3pt), outset: (y: 4pt), fill: rgb("EAEAEAFF"))[
-
         #box(
           grid(
             columns: 2,
@@ -157,7 +155,6 @@
             text(size: 7pt)[Condition:], text(size: 9.6pt)[#body],
           ),
         )
-
       ]
     }
   }
@@ -167,7 +164,6 @@
 #let objective(body) = (
   context {
     box(width: 100%, inset: (y: 3pt, x: 3pt), outset: (y: 4pt), fill: rgb("EAEAEAFF"))[
-      // #v(5pt)
       #box(
         grid(
           columns: 2,
@@ -180,9 +176,7 @@
   }
 )
 
-
-
-// Shared step component for main steps and substeps (inspired by Checklist A's step-component)
+// Shared step component for main steps and substeps
 #let step-component(prompt, isSubstep: false, ..actions) = context {
   let actionsPos = actions.pos()
   let thisAction = if (actionsPos.len() > 0) { actionsPos.at(0) } else { "" }
@@ -190,47 +184,40 @@
   set text(size: 9.8pt)
 
   // Update counters
-  counter("step").step() // Global step counter (for compatibility with Checklist B)
+  globalStepCounter.step() // Global step counter for compatibility
   if not isSubstep {
-    sequenceStep.step() // Increment main step counter
+    mainStep.step() // Increment main step counter
   }
 
   // Get counter values
-  let step-num = counter("step").get().at(0)
-  let seq-step-num = sequenceStep.get().at(0)
-  let section-num = counter("section").get().at(0)
+  let step-num = globalStepCounter.get().at(0)
+  let main-step-num = mainStep.get().at(0)
+  let section-num = sectionCounter.get().at(0)
 
   // Define indentation
-  let indent = if isSubstep { 1.2em } else { 0pt }
+  let indent = if isSubstep { 35pt } else { 0pt }
 
   // Create label for main steps only
-  let label-text = if not isSubstep { "step-" + str(section-num) + "-" + str(seq-step-num) } else { none }
+  let label-text = if not isSubstep { "step-" + str(section-num) + "-" + str(main-step-num) } else { none }
 
   // Layout using grid
-  grid(
+  box(
     inset: (left: indent),
-    columns: (auto, 1fr),
-    column-gutter: 10pt,
-    // stroke: 2pt,
-    // Column 1: Step number for main steps, empty for substeps
-    if not isSubstep {
-      text[#str(seq-step-num) #if label-text != none { label(label-text) }]
-    } else {
-      [] // No numbering for substeps
-    },
-    // Column 2: Prompt and action
-    box(
-      width: 100%,
-      [
-        #prompt
-        #if thisAction != "" {
-          " "
-          box(width: 1fr, repeat[.])
-          " "
-          thisAction
-        }
-      ],
-    )
+    grid(
+      columns: if not isSubstep {
+        (1.8em, auto, 1fr, auto) // Number + Prompt/Action for main steps
+      } else {
+        (auto, auto, auto) // Prompt/Action only for substeps
+      },
+      column-gutter: 0pt,
+      ..if not isSubstep {
+        (text[#str(main-step-num) #if label-text != none { label(label-text) }],)
+      },
+      prompt,
+      ..if thisAction != "" {
+        (box(width: 1fr, repeat[.]), align(right)[#thisAction])
+      }
+    ),
   )
 }
 
@@ -261,13 +248,11 @@
     stack(
       spacing: 4pt,
       line(length: 100%, stroke: 2pt + rgb("#d98d00ff")),
-
       grid(
         columns: 2,
         column-gutter: 6pt,
         text(weight: "bold", size: 9.8pt)[Caution!], text(weight: "bold", size: 9.8pt)[#body],
       ),
-
       line(length: 100%, stroke: 2pt + rgb("#d98d00ff")),
     )
   }
@@ -292,10 +277,11 @@
 // Choose one conditional with a line drawn between each step
 #let choose-one(body) = (
   context {
-    counter("step").step()
-    counter("localOption").update(0)
-    let step-num = counter("step").get()
-    text[#str(step-num.at(0) + 1) #label("step" + str(step-num.at(0) + 1))]
+    globalStepCounter.step()
+    optionInSectionCounter.update(0)
+    mainStep.step()
+    let step-num = globalStepCounter.get()
+    text[#str(step-num.at(0)) #label("step" + str(step-num.at(0)))]
     h(10pt)
     text()[Choose one:]
     linebreak()
@@ -306,9 +292,9 @@
 // An option inside a choose-one conditional
 #let option(body) = (
   context {
-    counter("globalOption").step()
-    counter("localOption").step()
-    let globalOption = counter("globalOption").get().at(0)
+    globalOptionCounter.step()
+    optionInSectionCounter.step()
+    let globalOption = globalOptionCounter.get().at(0)
     move(
       dx: 16pt,
       box(
@@ -323,8 +309,8 @@
     )
 
     context {
-      let localOption = counter("localOption").get().at(0)
-      let globalOption = counter("globalOption").get().at(0)
+      let localOption = optionInSectionCounter.get().at(0)
+      let globalOption = globalOptionCounter.get().at(0)
       if (localOption > 1) {
         let pos = locate(label("option" + str(globalOption - 1))).position()
         let currPos = locate(label("option" + str(globalOption))).position()
@@ -339,7 +325,7 @@
 
 // Links to another step
 #let goto(stepRef) = context {
-  let section-num = counter("section").get().at(0)
+  let section-num = sectionCounter.get().at(0)
   let triangle = curve(
     fill: black,
     curve.move((0pt, 0pt)), // Start at bottom-left corner
@@ -349,7 +335,7 @@
   )
 
   let target-label = if type(stepRef) == int {
-    "step" + "-" + str(section-num) + "-" + str(stepRef)
+    "step-" + str(section-num) + "-" + str(stepRef)
   } else {
     stepRef
   }
@@ -357,7 +343,7 @@
   let step-text = if type(stepRef) == int {
     str(stepRef)
   } else {
-    str(counter("step").at(label(stepRef)).at(0) + 1)
+    str(globalStepCounter.at(label(stepRef)).at(0) + 1)
   }
 
   move(dx: 18pt)[
@@ -393,7 +379,7 @@
   ]
 }
 
-// long line with lots of dots
+// Long line with lots of dots
 #let wait() = {
   repeat[#stack(dir: ltr, rect(width: 2mm, height: 1mm, fill: black), h(2mm))]
 }
@@ -407,9 +393,9 @@
 
 #let QRH(title: none, body) = {
   set page(
-    width: 105mm,
+    width: 110mm,
     height: 177mm,
-    margin: (bottom: 12mm, top: 8mm, x: 9mm),
+    margin: (bottom: 12mm, top: 8mm, x: 6mm),
     footer: [
       #line(start: (0pt, -6pt), length: 100%)
       #place(
@@ -429,7 +415,7 @@
       #place(
         right,
         dy: -2pt,
-        text(size: 6pt, fill: rgb("000000"))[
+        text(size: 6pt)[
           #title
         ],
       )

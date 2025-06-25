@@ -18,7 +18,7 @@
   #caution([HOT WATER #linebreak()Adult supervision required.])
   #step([*When* KETTLE boiled:])
   #substep("MUG", "Fill")
-  #step("Steep", "Allow to steep for a few minutes")
+  #step("Steep", [Allow to steep for#linebreak() a few minutes])
   #wait()
   #step("Remove teabag")
 
@@ -35,7 +35,7 @@
   // #pagebreak()
   #step("Pour milk into MUG", "To desired colour") <pourMilk>
   #step([*If* sugar required])
-  #substep([Sugar (one #linebreak() teaspoon at a time)], "Add to MUG")
+  #substep([Sugar (one teaspoon at a time)], "Add to MUG")
 
 ]
 
