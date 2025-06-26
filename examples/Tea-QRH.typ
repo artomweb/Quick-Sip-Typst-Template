@@ -11,14 +11,15 @@
     - Inability to Concentrate
   ]
   #objective[To replenish fluids.]
-  #step("KETTLE", "Filled to 1 CUP")
+  #step("KETTLE", "Filled to 1 CUP") <firstStepFirstSection>
+  #goto("firstStepFirstSection")
   #tab(tab("Large mugs may require more water."))
   #step("Teabag", "In MUG")
   #step("KETTLE switch", "ON")
   #caution([HOT WATER #linebreak()Adult supervision required.])
   #step([*When* KETTLE boiled:])
   #substep("MUG", "Fill")
-  #step("Steep", [Allow to steep for#linebreak() a few minutes])
+  #step("Steep", [Allow to steep for a few minutes])
   #wait()
   #step("Remove teabag")
 
@@ -51,6 +52,7 @@
   #substep("This is a substep", "")
 
   #tab(goto(1)) // Step 1 in THIS section (step number not tag)
+  #tab(goto("firstStep")) // Step 1 in THIS section (step number not tag)
 
 
 ]

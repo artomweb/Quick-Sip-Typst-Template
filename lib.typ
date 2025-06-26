@@ -1,7 +1,7 @@
 // Initialize counters for QRH hierarchy
 #let sectionCounter = counter("sectionCounter") // Tracks the current section number
 #let mainStep = counter("mainStep") // Tracks main steps within a section
-#let globalStepCounter = counter("globalStepCounter") // Tracks steps globally for compatibility
+#let globalStepCounter = counter("globalStepCounter") // Tracks steps globally in the doc
 #let optionInSectionCounter = counter("optionInSectionCounter") // Tracks options within a choose-one block in a section
 #let globalOptionCounter = counter("globalOptionCounter") // Tracks options globally across the document
 
@@ -36,7 +36,7 @@
 
       // Reset all step-related counters for the new section
       globalStepCounter.update(0)
-      mainStep.update(1)
+      mainStep.update(0)
 
       let box-height = measure(
         align(
@@ -177,7 +177,7 @@
 )
 
 // Shared step component for main steps and substeps
-#let step-component(prompt, isSubstep: false, ..actions) = context {
+#let step-component(prompt, isSubstep: false, ..actions) = {
   let actionsPos = actions.pos()
   let thisAction = if (actionsPos.len() > 0) { actionsPos.at(0) } else { "" }
   v(1pt)
@@ -189,36 +189,38 @@
     mainStep.step() // Increment main step counter
   }
 
-  // Get counter values
-  let step-num = globalStepCounter.get().at(0)
-  let main-step-num = mainStep.get().at(0)
-  let section-num = sectionCounter.get().at(0)
+  context {
+    // Get counter values
+    let step-num = globalStepCounter.get().at(0)
+    let main-step-num = mainStep.get().at(0)
+    let section-num = sectionCounter.get().at(0)
 
-  // Define indentation
-  let indent = if isSubstep { 24pt } else { 0pt }
+    // Define indentation
+    let indent = if isSubstep { 24pt } else { 0pt }
 
-  // Create label for main steps only
-  let label-text = if not isSubstep { "step-" + str(section-num) + "-" + str(main-step-num) } else { none }
+    // Create label for main steps only
+    let label-text = if not isSubstep { "step-" + str(section-num) + "-" + str(main-step-num) } else { none }
 
-  // Layout using grid
-  box(
-    inset: (left: indent),
-    grid(
-      columns: if not isSubstep {
-        (1.6em, auto, 1fr, auto) // Number + Prompt/Action for main steps
-      } else {
-        (auto, auto, auto) // Prompt/Action only for substeps
-      },
-      column-gutter: 1pt,
-      ..if not isSubstep {
-        (text[#str(main-step-num) #if label-text != none { label(label-text) }],)
-      },
-      prompt,
-      ..if thisAction != "" {
-        (box(width: 1fr, repeat[.]), align(right)[#thisAction])
-      }
-    ),
-  )
+    // Layout using grid
+    box(
+      inset: (left: indent),
+      grid(
+        columns: if not isSubstep {
+          (1.6em, auto, 1fr, auto) // Number + Prompt/Action for main steps
+        } else {
+          (auto, auto, auto) // Prompt/Action only for substeps
+        },
+        column-gutter: 1pt,
+        ..if not isSubstep {
+          (text[#str(main-step-num) #if label-text != none { label(label-text) }],)
+        },
+        prompt,
+        ..if thisAction != "" {
+          (box(width: 1fr, repeat[.]), align(right)[#thisAction])
+        }
+      ),
+    )
+  }
 }
 
 // Main step function
@@ -343,7 +345,7 @@
   let step-text = if type(stepRef) == int {
     str(stepRef)
   } else {
-    str(globalStepCounter.at(label(stepRef)).at(0) + 1)
+    str(mainStep.at(label(stepRef)).at(0) + 1)
   }
 
   move(dx: 18pt)[
