@@ -12,7 +12,7 @@
   ]
   #objective[To replenish fluids.]
   #step("KETTLE", "Filled to 1 CUP") <firstStepFirstSection>
-  #goto("firstStepFirstSection")
+  // #goto("firstStepFirstSection")
   #tab(tab("Large mugs may require more water."))
   #step("Teabag", "In MUG")
   #step("KETTLE switch", "ON")
