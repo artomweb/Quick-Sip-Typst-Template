@@ -383,7 +383,7 @@
 
 // Long line with lots of dots
 #let wait() = {
-  repeat[#stack(dir: ltr, rect(width: 2mm, height: 1mm, fill: black), h(2mm))]
+  repeat(gap: 2mm)[#stack(dir: ltr, rect(width: 1.8mm, height: 0.6mm, fill: black))]
 }
 
 // Show the current page number (INTERNAL)
