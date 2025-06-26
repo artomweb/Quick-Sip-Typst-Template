@@ -1,6 +1,6 @@
 [package]
 name = "quick-sip"
-version = "0.1.2"
+version = "0.1.3"
 entrypoint = "lib.typ"
 authors = ["Archie Webster <https://github.com/artomweb>"]
 license = "MIT"
