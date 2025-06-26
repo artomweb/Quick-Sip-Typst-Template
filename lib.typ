@@ -195,7 +195,7 @@
   let section-num = sectionCounter.get().at(0)
 
   // Define indentation
-  let indent = if isSubstep { 35pt } else { 0pt }
+  let indent = if isSubstep { 24pt } else { 0pt }
 
   // Create label for main steps only
   let label-text = if not isSubstep { "step-" + str(section-num) + "-" + str(main-step-num) } else { none }
@@ -205,11 +205,11 @@
     inset: (left: indent),
     grid(
       columns: if not isSubstep {
-        (1.8em, auto, 1fr, auto) // Number + Prompt/Action for main steps
+        (1.6em, auto, 1fr, auto) // Number + Prompt/Action for main steps
       } else {
         (auto, auto, auto) // Prompt/Action only for substeps
       },
-      column-gutter: 0pt,
+      column-gutter: 1pt,
       ..if not isSubstep {
         (text[#str(main-step-num) #if label-text != none { label(label-text) }],)
       },
